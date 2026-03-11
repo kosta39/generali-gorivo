@@ -131,34 +131,47 @@ function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-red-700 text-white px-6 py-4 shadow">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <img src={logo} alt="Generali" className="w-14 bg-white rounded p-1" />
-            <div>
-              <h1 className="text-xl font-bold">
-                {isAdmin ? "Generali osiguranje Montenegro Admin" : "Generali osiguranje Montenegro"}
-              </h1>
-              <p className="text-sm text-red-100">
-                {profile?.full_name}
-                {vehicle ? ` • ${vehicle.model} • ${vehicle.plate}` : ""}
-                {isAdmin && !vehicle ? " • Admin bez vozila" : ""}
-              </p>
-            </div>
-          </div>
+  <div className="max-w-7xl mx-auto flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div className="flex items-center gap-4 min-w-0">
+      <img
+        src={logo}
+        alt="Generali"
+        className="w-14 bg-white rounded p-1 shrink-0"
+      />
 
-          <div className="flex items-center gap-3">
-  <ChangePasswordPanel />
+      <div className="min-w-0">
+        <h1 className="text-xl font-bold break-words">
+          {isAdmin
+            ? "Generali osiguranje Montenegro Admin"
+            : "Generali osiguranje Montenegro"}
+        </h1>
 
-  <button
-    type="button"
-    onClick={handleLogout}
-    className="bg-white text-red-700 px-4 py-2 rounded-lg font-medium"
-  >
-    Logout
-  </button>
+        <p className="text-sm text-red-100 break-words">
+          {profile?.full_name}
+          {vehicle ? ` • ${vehicle.model} • ${vehicle.plate}` : ""}
+          {isAdmin && !vehicle ? " • Admin bez vozila" : ""}
+        </p>
+      </div>
+    </div>
+
+    <div className="flex flex-wrap items-center gap-3 md:flex-nowrap">
+      <div className="hidden sm:block">
+        <ChangePasswordPanel />
+      </div>
+
+      <button
+        type="button"
+        onClick={handleLogout}
+        className="bg-white text-red-700 px-4 py-2 rounded-lg font-medium"
+      >
+        Logout
+      </button>
+    </div>
+  </div>
+</header>
+<div className="sm:hidden max-w-7xl mx-auto px-6 pt-4">
+  <ChangePasswordPanel mobile />
 </div>
-        </div>
-      </header>
 
       <main className="max-w-7xl mx-auto p-6 space-y-6">
         {isAdmin ? (
