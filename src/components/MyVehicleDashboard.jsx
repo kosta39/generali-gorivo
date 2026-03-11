@@ -42,8 +42,6 @@ function MyVehicleDashboard({ profile, vehicle }) {
     }
   }, [vehicle?.id, selectedMonth, selectedYear])
 
-  
-
   const loadMonthData = async () => {
     const { data: kmData, error: kmError } = await supabase
       .from("monthly_km")
@@ -523,22 +521,22 @@ function MyVehicleDashboard({ profile, vehicle }) {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-2xl shadow p-6">
-        <h2 className="text-xl font-bold mb-1">Moj automobil</h2>
-        <p className="text-sm text-gray-500">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="bg-white rounded-2xl shadow p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-bold mb-1">Moj automobil</h2>
+        <p className="text-sm sm:text-base text-gray-500 break-words">
           {profile?.full_name} • {vehicle?.model} • {vehicle?.plate}
         </p>
       </div>
 
-      <div className="bg-white rounded-2xl shadow p-6">
-        <h2 className="text-xl font-bold mb-4">Izbor perioda</h2>
+      <div className="bg-white rounded-2xl shadow p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Izbor perioda</h2>
 
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">Mjesec</label>
             <select
-              className="w-full border rounded-lg px-3 py-2"
+              className="w-full border rounded-xl px-3 py-3 sm:py-2.5"
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(Number(e.target.value))}
             >
@@ -554,7 +552,7 @@ function MyVehicleDashboard({ profile, vehicle }) {
             <label className="block text-sm font-medium mb-1">Godina</label>
             <input
               type="number"
-              className="w-full border rounded-lg px-3 py-2"
+              className="w-full border rounded-xl px-3 py-3 sm:py-2.5"
               value={selectedYear}
               onChange={(e) => setSelectedYear(Number(e.target.value))}
             />
@@ -562,9 +560,11 @@ function MyVehicleDashboard({ profile, vehicle }) {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl shadow p-6">
-          <h2 className="text-xl font-bold mb-4">Kilometraža za mjesec</h2>
+      <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+        <div className="bg-white rounded-2xl shadow p-4 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">
+            Kilometraža za mjesec
+          </h2>
 
           <form onSubmit={handleSaveKm} className="space-y-4">
             <div>
@@ -573,7 +573,7 @@ function MyVehicleDashboard({ profile, vehicle }) {
               </label>
               <input
                 type="number"
-                className="w-full border rounded-lg px-3 py-2"
+                className="w-full border rounded-xl px-3 py-3 sm:py-2.5"
                 value={kmStart}
                 onChange={(e) => setKmStart(e.target.value)}
               />
@@ -585,84 +585,91 @@ function MyVehicleDashboard({ profile, vehicle }) {
               </label>
               <input
                 type="number"
-                className="w-full border rounded-lg px-3 py-2"
+                className="w-full border rounded-xl px-3 py-3 sm:py-2.5"
                 value={kmEnd}
                 onChange={(e) => setKmEnd(e.target.value)}
               />
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-3 font-medium">
+            <div className="bg-gray-50 rounded-xl p-4 font-medium text-sm sm:text-base">
               Pređeni kilometri za mjesec: {monthKm} km
             </div>
 
-            <button className="w-full bg-red-600 text-white py-2.5 rounded-lg">
+            <button className="w-full bg-red-600 text-white py-3 rounded-xl font-medium">
               Sačuvaj kilometražu
             </button>
           </form>
         </div>
 
-        <div className="bg-white rounded-2xl shadow p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">
+        <div className="bg-white rounded-2xl shadow p-4 sm:p-6">
+          <div className="flex items-start sm:items-center justify-between gap-3 mb-3 sm:mb-4">
+            <h2 className="text-lg sm:text-xl font-bold">
               {editingFuelEntryId ? "Izmjena unosa goriva" : "Unos goriva"}
             </h2>
 
             {editingFuelEntryId && (
-              <span className="text-sm text-amber-600 font-medium">Edit mode</span>
+              <span className="text-xs sm:text-sm text-amber-600 font-medium whitespace-nowrap">
+                Edit mode
+              </span>
             )}
           </div>
 
           <form onSubmit={handleAddFuel} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Datum</label>
-              <input
-                type="date"
-                className="w-full border rounded-lg px-3 py-2"
-                value={fuelDate}
-                onChange={(e) => setFuelDate(e.target.value)}
-              />
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Datum</label>
+                <input
+                  type="date"
+                  className="w-full border rounded-xl px-3 py-3 sm:py-2.5"
+                  value={fuelDate}
+                  onChange={(e) => setFuelDate(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Litara</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  className="w-full border rounded-xl px-3 py-3 sm:py-2.5"
+                  value={liters}
+                  onChange={(e) => setLiters(e.target.value)}
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-1">Litara</label>
-              <input
-                type="number"
-                step="0.01"
-                className="w-full border rounded-lg px-3 py-2"
-                value={liters}
-                onChange={(e) => setLiters(e.target.value)}
-              />
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Cijena po litru (€)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  className="w-full border rounded-xl px-3 py-3 sm:py-2.5"
+                  value={pricePerLiter}
+                  onChange={(e) => setPricePerLiter(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Način plaćanja
+                </label>
+                <select
+                  className="w-full border rounded-xl px-3 py-3 sm:py-2.5"
+                  value={paymentType}
+                  onChange={(e) => setPaymentType(e.target.value)}
+                >
+                  <option value="company">Firmina kartica</option>
+                  <option value="private">Privatno</option>
+                </select>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Cijena po litru (€)
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                className="w-full border rounded-lg px-3 py-2"
-                value={pricePerLiter}
-                onChange={(e) => setPricePerLiter(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Način plaćanja
-              </label>
-              <select
-                className="w-full border rounded-lg px-3 py-2"
-                value={paymentType}
-                onChange={(e) => setPaymentType(e.target.value)}
-              >
-                <option value="company">Firmina kartica</option>
-                <option value="private">Privatno</option>
-              </select>
-            </div>
-
-            <div className="bg-gray-50 rounded-lg p-3 font-medium">
-              Ukupna cijena: {totalPrice.toFixed(2)} €
+            <div className="bg-gray-50 rounded-xl p-4">
+              <p className="text-sm text-gray-500 mb-1">Ukupna cijena</p>
+              <p className="text-lg font-bold">{totalPrice.toFixed(2)} €</p>
             </div>
 
             <div>
@@ -672,13 +679,13 @@ function MyVehicleDashboard({ profile, vehicle }) {
                 id="fuel-receipt-file-input"
                 type="file"
                 accept="image/*"
-                className="w-full border rounded-lg px-3 py-2"
+                className="w-full border rounded-xl px-3 py-3 sm:py-2.5"
                 onChange={(e) => setReceiptFile(e.target.files?.[0] || null)}
               />
             </div>
 
             {existingReceiptPath && !receiptFile && (
-              <div className="flex items-center justify-between gap-3 rounded-lg bg-gray-50 p-3">
+              <div className="rounded-xl bg-gray-50 p-4 space-y-3">
                 <p className="text-sm text-gray-500">
                   Postojeći račun je sačuvan. Možete ostaviti ovako ili izabrati novu sliku.
                 </p>
@@ -692,7 +699,7 @@ function MyVehicleDashboard({ profile, vehicle }) {
                         receipt_path: existingReceiptPath,
                       })
                     }
-                    className="text-sm text-red-600 underline whitespace-nowrap"
+                    className="text-sm text-red-600 underline"
                   >
                     Obriši račun
                   </button>
@@ -700,8 +707,8 @@ function MyVehicleDashboard({ profile, vehicle }) {
               </div>
             )}
 
-            <div className="flex gap-3">
-              <button className="flex-1 bg-red-600 text-white py-2.5 rounded-lg">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button className="flex-1 bg-red-600 text-white py-3 rounded-xl font-medium">
                 {editingFuelEntryId ? "Sačuvaj izmjene" : "Dodaj unos goriva"}
               </button>
 
@@ -709,7 +716,7 @@ function MyVehicleDashboard({ profile, vehicle }) {
                 <button
                   type="button"
                   onClick={handleCancelEdit}
-                  className="px-4 py-2.5 rounded-lg border border-gray-300 text-gray-700"
+                  className="px-4 py-3 rounded-xl border border-gray-300 text-gray-700 font-medium"
                 >
                   Otkaži
                 </button>
@@ -719,137 +726,229 @@ function MyVehicleDashboard({ profile, vehicle }) {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-4">
-        <div className="bg-white rounded-2xl shadow p-5">
-          <p className="text-sm text-gray-500">Sipano za mjesec</p>
-          <p className="text-2xl font-bold">{monthFuel.toFixed(2)} l</p>
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        <div className="bg-white rounded-2xl shadow p-4 sm:p-5">
+          <p className="text-xs sm:text-sm text-gray-500">Sipano za mjesec</p>
+          <p className="text-lg sm:text-2xl font-bold">{monthFuel.toFixed(2)} l</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow p-5">
-          <p className="text-sm text-gray-500">Pređeno za mjesec</p>
-          <p className="text-2xl font-bold">{monthKm} km</p>
+        <div className="bg-white rounded-2xl shadow p-4 sm:p-5">
+          <p className="text-xs sm:text-sm text-gray-500">Pređeno za mjesec</p>
+          <p className="text-lg sm:text-2xl font-bold">{monthKm} km</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow p-5">
-          <p className="text-sm text-gray-500">Potrošnja za mjesec</p>
-          <p className="text-2xl font-bold">{monthConsumption.toFixed(2)} l/100 km</p>
+        <div className="bg-white rounded-2xl shadow p-4 sm:p-5">
+          <p className="text-xs sm:text-sm text-gray-500">Potrošnja za mjesec</p>
+          <p className="text-lg sm:text-2xl font-bold">
+            {monthConsumption.toFixed(2)} l/100 km
+          </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow p-5">
-          <p className="text-sm text-gray-500">Sipano od početka godine</p>
-          <p className="text-2xl font-bold">{fuelYtdValue.toFixed(2)} l</p>
+        <div className="bg-white rounded-2xl shadow p-4 sm:p-5">
+          <p className="text-xs sm:text-sm text-gray-500">Sipano od početka godine</p>
+          <p className="text-lg sm:text-2xl font-bold">{fuelYtdValue.toFixed(2)} l</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow p-5">
-          <p className="text-sm text-gray-500">Prosječno sipano do mjeseca</p>
-          <p className="text-2xl font-bold">{avgFuelYtd.toFixed(2)} l</p>
+        <div className="bg-white rounded-2xl shadow p-4 sm:p-5">
+          <p className="text-xs sm:text-sm text-gray-500">Prosječno sipano do mjeseca</p>
+          <p className="text-lg sm:text-2xl font-bold">{avgFuelYtd.toFixed(2)} l</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow p-5">
-          <p className="text-sm text-gray-500">Pređeno od početka godine</p>
-          <p className="text-2xl font-bold">{kmYtd} km</p>
+        <div className="bg-white rounded-2xl shadow p-4 sm:p-5">
+          <p className="text-xs sm:text-sm text-gray-500">Pređeno od početka godine</p>
+          <p className="text-lg sm:text-2xl font-bold">{kmYtd} km</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow p-5">
-          <p className="text-sm text-gray-500">Prosjek pređenih km</p>
-          <p className="text-2xl font-bold">{avgKmYtd.toFixed(0)} km</p>
+        <div className="bg-white rounded-2xl shadow p-4 sm:p-5">
+          <p className="text-xs sm:text-sm text-gray-500">Prosjek pređenih km</p>
+          <p className="text-lg sm:text-2xl font-bold">{avgKmYtd.toFixed(0)} km</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow p-5 lg:col-span-2">
-          <p className="text-sm text-gray-500">
+        <div className="bg-white rounded-2xl shadow p-4 sm:p-5 col-span-2 lg:col-span-2">
+          <p className="text-xs sm:text-sm text-gray-500">
             Prosječna potrošnja na 100 km od početka godine
           </p>
-          <p className="text-2xl font-bold">
+          <p className="text-lg sm:text-2xl font-bold">
             {avgConsumptionYtd.toFixed(2)} l/100 km
           </p>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow p-6">
-        <h2 className="text-xl font-bold mb-4">Unosi goriva za izabrani mjesec</h2>
+      <div className="bg-white rounded-2xl shadow p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-bold mb-4">
+          Unosi goriva za izabrani mjesec
+        </h2>
 
         {fuelEntries.length === 0 ? (
           <p className="text-gray-500">Nema unosa za izabrani mjesec.</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-2">Datum</th>
-                  <th className="text-left py-2">Litara</th>
-                  <th className="text-left py-2">Cijena/l</th>
-                  <th className="text-left py-2">Ukupno</th>
-                  <th className="text-left py-2">Plaćanje</th>
-                  <th className="text-left py-2">Račun</th>
-                  <th className="text-left py-2">Akcije</th>
-                </tr>
-              </thead>
-              <tbody>
-                {fuelEntries.map((entry) => {
-                  const receiptUrl = getReceiptUrl(entry.receipt_path)
+          <>
+            <div className="block sm:hidden space-y-3">
+              {fuelEntries.map((entry) => {
+                const receiptUrl = getReceiptUrl(entry.receipt_path)
 
-                  return (
-                    <tr key={entry.id} className="border-b">
-                      <td className="py-2">{entry.fuel_date}</td>
-                      <td className="py-2">{Number(entry.liters || 0).toFixed(2)} l</td>
-                      <td className="py-2">
-                        {Number(entry.price_per_liter || 0).toFixed(2)} €
-                      </td>
-                      <td className="py-2">
-                        {Number(entry.total_price || 0).toFixed(2)} €
-                      </td>
-                      <td className="py-2">
-                        {entry.payment_type === "company" ? "Firma" : "Privatno"}
-                      </td>
-                      <td className="py-2">
-                        {receiptUrl ? (
+                return (
+                  <div key={entry.id} className="border rounded-xl p-4 bg-gray-50">
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between gap-3">
+                        <span className="text-gray-500">Datum</span>
+                        <span className="font-medium text-right">{entry.fuel_date}</span>
+                      </div>
+
+                      <div className="flex justify-between gap-3">
+                        <span className="text-gray-500">Litara</span>
+                        <span className="font-medium">
+                          {Number(entry.liters || 0).toFixed(2)} l
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between gap-3">
+                        <span className="text-gray-500">Cijena/l</span>
+                        <span className="font-medium">
+                          {Number(entry.price_per_liter || 0).toFixed(2)} €
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between gap-3">
+                        <span className="text-gray-500">Ukupno</span>
+                        <span className="font-medium">
+                          {Number(entry.total_price || 0).toFixed(2)} €
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between gap-3">
+                        <span className="text-gray-500">Plaćanje</span>
+                        <span className="font-medium">
+                          {entry.payment_type === "company" ? "Firma" : "Privatno"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 flex flex-wrap gap-3 text-sm">
+                      {receiptUrl ? (
+                        <>
+                          <a
+                            href={receiptUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-red-600 underline"
+                          >
+                            Pogledaj račun
+                          </a>
+
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveReceiptFromEntry(entry)}
+                            className="text-red-600 underline"
+                          >
+                            Obriši račun
+                          </button>
+                        </>
+                      ) : (
+                        <span className="text-gray-400">Nema računa</span>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => handleEditFuelEntry(entry)}
+                        className="text-blue-600 underline"
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteFuelEntry(entry)}
+                        className="text-red-600 underline"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-2">Datum</th>
+                    <th className="text-left py-2">Litara</th>
+                    <th className="text-left py-2">Cijena/l</th>
+                    <th className="text-left py-2">Ukupno</th>
+                    <th className="text-left py-2">Plaćanje</th>
+                    <th className="text-left py-2">Račun</th>
+                    <th className="text-left py-2">Akcije</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {fuelEntries.map((entry) => {
+                    const receiptUrl = getReceiptUrl(entry.receipt_path)
+
+                    return (
+                      <tr key={entry.id} className="border-b">
+                        <td className="py-2">{entry.fuel_date}</td>
+                        <td className="py-2">{Number(entry.liters || 0).toFixed(2)} l</td>
+                        <td className="py-2">
+                          {Number(entry.price_per_liter || 0).toFixed(2)} €
+                        </td>
+                        <td className="py-2">
+                          {Number(entry.total_price || 0).toFixed(2)} €
+                        </td>
+                        <td className="py-2">
+                          {entry.payment_type === "company" ? "Firma" : "Privatno"}
+                        </td>
+                        <td className="py-2">
+                          {receiptUrl ? (
+                            <div className="flex items-center gap-3">
+                              <a
+                                href={receiptUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-red-600 underline"
+                              >
+                                Pogledaj račun
+                              </a>
+
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveReceiptFromEntry(entry)}
+                                className="text-sm text-red-600 underline"
+                              >
+                                Obriši račun
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-gray-400">Nema računa</span>
+                          )}
+                        </td>
+                        <td className="py-2">
                           <div className="flex items-center gap-3">
-                            <a
-                              href={receiptUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-red-600 underline"
+                            <button
+                              type="button"
+                              onClick={() => handleEditFuelEntry(entry)}
+                              className="text-blue-600 underline"
                             >
-                              Pogledaj račun
-                            </a>
+                              Edit
+                            </button>
 
                             <button
                               type="button"
-                              onClick={() => handleRemoveReceiptFromEntry(entry)}
-                              className="text-sm text-red-600 underline"
+                              onClick={() => handleDeleteFuelEntry(entry)}
+                              className="text-red-600 underline"
                             >
-                              Obriši račun
+                              Delete
                             </button>
                           </div>
-                        ) : (
-                          <span className="text-gray-400">Nema računa</span>
-                        )}
-                      </td>
-                      <td className="py-2">
-                        <div className="flex items-center gap-3">
-                          <button
-                            type="button"
-                            onClick={() => handleEditFuelEntry(entry)}
-                            className="text-blue-600 underline"
-                          >
-                            Edit
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteFuelEntry(entry)}
-                            className="text-red-600 underline"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
     </div>

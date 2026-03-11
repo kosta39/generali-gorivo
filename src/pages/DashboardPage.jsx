@@ -15,14 +15,6 @@ function DashboardPage() {
   const isLoggingOutRef = useRef(false)
   const isMountedRef = useRef(true)
 
-  const shouldIgnoreFetchError = (error) => {
-    return (
-      isLoggingOutRef.current ||
-      !isMountedRef.current ||
-      String(error?.message || "").includes("Failed to fetch")
-    )
-  }
-
   useEffect(() => {
     isMountedRef.current = true
     checkUser()
@@ -33,77 +25,77 @@ function DashboardPage() {
   }, [])
 
   const checkUser = async () => {
-  try {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
 
-    if (!isMountedRef.current || isLoggingOutRef.current) {
-      return
-    }
+      if (!isMountedRef.current || isLoggingOutRef.current) {
+        return
+      }
 
-    if (!session?.user) {
-      setLoading(false)
-      return
-    }
+      if (!session?.user) {
+        setLoading(false)
+        return
+      }
 
-    const { data: profileData, error: profileError } = await supabase
-      .from("profiles")
-      .select("id, full_name, username, email, role, vehicle_id")
-      .eq("id", session.user.id)
-      .maybeSingle()
-
-    if (!isMountedRef.current || isLoggingOutRef.current) {
-      return
-    }
-
-    if (profileError) {
-      console.error("PROFILE ERROR:", profileError)
-      return
-    }
-
-    if (!profileData) {
-      return
-    }
-
-    setProfile(profileData)
-
-    if (profileData.vehicle_id) {
-      const { data: vehicleData, error: vehicleError } = await supabase
-        .from("vehicles")
-        .select("id, model, plate")
-        .eq("id", profileData.vehicle_id)
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("id, full_name, username, email, role, vehicle_id")
+        .eq("id", session.user.id)
         .maybeSingle()
 
       if (!isMountedRef.current || isLoggingOutRef.current) {
         return
       }
 
-      if (vehicleError) {
-        console.error("VEHICLE ERROR:", vehicleError)
+      if (profileError) {
+        console.error("PROFILE ERROR:", profileError)
         return
       }
 
-      setVehicle(vehicleData || null)
-
-      if (profileData.role === "admin") {
-        setActiveTab("my-vehicle")
+      if (!profileData) {
+        return
       }
-    } else {
-      setVehicle(null)
 
-      if (profileData.role === "admin") {
-        setActiveTab("fleet-overview")
+      setProfile(profileData)
+
+      if (profileData.vehicle_id) {
+        const { data: vehicleData, error: vehicleError } = await supabase
+          .from("vehicles")
+          .select("id, model, plate")
+          .eq("id", profileData.vehicle_id)
+          .maybeSingle()
+
+        if (!isMountedRef.current || isLoggingOutRef.current) {
+          return
+        }
+
+        if (vehicleError) {
+          console.error("VEHICLE ERROR:", vehicleError)
+          return
+        }
+
+        setVehicle(vehicleData || null)
+
+        if (profileData.role === "admin") {
+          setActiveTab("my-vehicle")
+        }
+      } else {
+        setVehicle(null)
+
+        if (profileData.role === "admin") {
+          setActiveTab("fleet-overview")
+        }
       }
-    }
-  } catch (err) {
-    console.error("CHECK USER ERROR:", err)
-  } finally {
-    if (isMountedRef.current && !isLoggingOutRef.current) {
-      setLoading(false)
+    } catch (err) {
+      console.error("CHECK USER ERROR:", err)
+    } finally {
+      if (isMountedRef.current && !isLoggingOutRef.current) {
+        setLoading(false)
+      }
     }
   }
-}
 
   const handleLogout = async () => {
     isLoggingOutRef.current = true
@@ -121,70 +113,81 @@ function DashboardPage() {
   const hasVehicle = !!vehicle
 
   if (loading) {
-    return <div className="p-10">Učitavanje...</div>
+    return <div className="p-6 sm:p-10">Učitavanje...</div>
   }
 
   if (!profile) {
-    return <div className="p-10">Učitavanje...</div>
+    return <div className="p-6 sm:p-10">Učitavanje...</div>
   }
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <header className="bg-red-700 text-white px-6 py-4 shadow">
-  <div className="max-w-7xl mx-auto flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-    <div className="flex items-center gap-4 min-w-0">
-      <img
-        src={logo}
-        alt="Generali"
-        className="w-14 bg-white rounded p-1 shrink-0"
-      />
+      <header className="bg-red-700 text-white shadow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0">
+              <img
+                src={logo}
+                alt="Generali"
+                className="w-12 sm:w-14 bg-white rounded-lg p-1.5 shrink-0"
+              />
 
-      <div className="min-w-0">
-        <h1 className="text-xl font-bold break-words">
-          {isAdmin
-            ? "Generali osiguranje Montenegro Admin"
-            : "Generali osiguranje Montenegro"}
-        </h1>
+              <div className="min-w-0">
+                <h1 className="text-lg sm:text-xl font-bold leading-tight break-words">
+                  {isAdmin
+                    ? "Generali osiguranje Montenegro Admin"
+                    : "Generali osiguranje Montenegro"}
+                </h1>
 
-        <p className="text-sm text-red-100 break-words">
-          {profile?.full_name}
-          {vehicle ? ` • ${vehicle.model} • ${vehicle.plate}` : ""}
-          {isAdmin && !vehicle ? " • Admin bez vozila" : ""}
-        </p>
+                <p className="mt-1 text-sm sm:text-base text-red-100 leading-snug break-words">
+                  {profile?.full_name}
+                  {vehicle ? ` • ${vehicle.model} • ${vehicle.plate}` : ""}
+                  {isAdmin && !vehicle ? " • Admin bez vozila" : ""}
+                </p>
+              </div>
+            </div>
+
+            <div className="hidden sm:flex items-center gap-3 shrink-0">
+              <ChangePasswordPanel />
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="bg-white text-red-700 px-4 py-2.5 rounded-xl font-medium"
+              >
+                Logout
+              </button>
+            </div>
+
+            <div className="sm:hidden flex items-center">
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="w-full bg-white text-red-700 px-4 py-3 rounded-xl font-medium"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="sm:hidden max-w-7xl mx-auto px-4 pt-4">
+        <ChangePasswordPanel mobile />
       </div>
-    </div>
 
-    <div className="flex flex-wrap items-center gap-3 md:flex-nowrap">
-      <div className="hidden sm:block">
-        <ChangePasswordPanel />
-      </div>
-
-      <button
-        type="button"
-        onClick={handleLogout}
-        className="bg-white text-red-700 px-4 py-2 rounded-lg font-medium"
-      >
-        Logout
-      </button>
-    </div>
-  </div>
-</header>
-<div className="sm:hidden max-w-7xl mx-auto px-6 pt-4">
-  <ChangePasswordPanel mobile />
-</div>
-
-      <main className="max-w-7xl mx-auto p-6 space-y-6">
+      <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
         {isAdmin ? (
           <>
-            <div className="bg-white rounded-2xl shadow p-2">
+            <div className="bg-white rounded-2xl shadow p-3 sm:p-2">
               <div className="flex flex-wrap gap-2">
                 {hasVehicle && (
                   <button
                     type="button"
                     onClick={() => setActiveTab("my-vehicle")}
-                    className={`px-4 py-2 rounded-xl font-medium transition ${
+                    className={`px-4 py-3 sm:py-2.5 rounded-xl font-medium transition ${
                       activeTab === "my-vehicle"
-                        ? "bg-red-600 text-white"
+                        ? "bg-red-600 text-white shadow-sm"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                   >
@@ -195,9 +198,9 @@ function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("fleet-overview")}
-                  className={`px-4 py-2 rounded-xl font-medium transition ${
+                  className={`px-4 py-3 sm:py-2.5 rounded-xl font-medium transition ${
                     activeTab === "fleet-overview"
-                      ? "bg-red-600 text-white"
+                      ? "bg-red-600 text-white shadow-sm"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
@@ -207,9 +210,9 @@ function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("receipts-overview")}
-                  className={`px-4 py-2 rounded-xl font-medium transition ${
+                  className={`px-4 py-3 sm:py-2.5 rounded-xl font-medium transition ${
                     activeTab === "receipts-overview"
-                      ? "bg-red-600 text-white"
+                      ? "bg-red-600 text-white shadow-sm"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
