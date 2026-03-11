@@ -5,6 +5,7 @@ import MyVehicleDashboard from "../components/MyVehicleDashboard"
 import AdminFleetOverview from "../components/AdminFleetOverview"
 import AdminReceiptsOverview from "../components/AdminReceiptsOverview"
 import ChangePasswordPanel from "../pages/ChangePasswordPanel"
+import AdminCostsOverview from "../components/AdminCostsOverview"
 
 function DashboardPage() {
   const [profile, setProfile] = useState(null)
@@ -218,6 +219,17 @@ function DashboardPage() {
                 >
                   Pregled unosa računa
                 </button>
+                <button
+  type="button"
+  onClick={() => setActiveTab("costs-overview")}
+  className={`px-4 py-3 sm:py-2.5 rounded-xl font-medium transition ${
+    activeTab === "costs-overview"
+      ? "bg-red-600 text-white shadow-sm"
+      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+  }`}
+>
+  Troškovi
+</button>
               </div>
             </div>
 
@@ -228,6 +240,8 @@ function DashboardPage() {
             {activeTab === "fleet-overview" && <AdminFleetOverview />}
 
             {activeTab === "receipts-overview" && <AdminReceiptsOverview />}
+
+            {activeTab === "costs-overview" && <AdminCostsOverview />}
           </>
         ) : (
           hasVehicle && <MyVehicleDashboard profile={profile} vehicle={vehicle} />
