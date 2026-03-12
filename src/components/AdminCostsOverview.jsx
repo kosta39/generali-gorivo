@@ -351,11 +351,6 @@ function AdminCostsOverview() {
         </div>
 
         <div className="bg-white rounded-2xl shadow p-4 sm:p-5">
-          <p className="text-xs sm:text-sm text-gray-500">Ukupan trošak od početka godine</p>
-          <p className="text-lg sm:text-2xl font-bold">{summary.ytdTotalCost.toFixed(2)} €</p>
-        </div>
-
-        <div className="bg-white rounded-2xl shadow p-4 sm:p-5">
           <p className="text-xs sm:text-sm text-gray-500">Firma platila za mjesec</p>
           <p className="text-lg sm:text-2xl font-bold">{summary.monthCompanyCost.toFixed(2)} €</p>
         </div>
@@ -363,6 +358,11 @@ function AdminCostsOverview() {
         <div className="bg-white rounded-2xl shadow p-4 sm:p-5">
           <p className="text-xs sm:text-sm text-gray-500">Privatno plaćeno za mjesec</p>
           <p className="text-lg sm:text-2xl font-bold">{summary.monthPrivateCost.toFixed(2)} €</p>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow p-4 sm:p-5">
+          <p className="text-xs sm:text-sm text-gray-500">Ukupan trošak od početka godine</p>
+          <p className="text-lg sm:text-2xl font-bold">{summary.ytdTotalCost.toFixed(2)} €</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow p-4 sm:p-5">
