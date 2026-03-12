@@ -257,54 +257,85 @@ function AdminFleetOverview() {
     return sortConfig.direction === "asc" ? " ▲" : " ▼"
   }
 
+const normalizePdfText = (value) => {
+  return String(value || "")
+    .replace(/č/g, "c")
+    .replace(/ć/g, "c")
+    .replace(/ž/g, "z")
+    .replace(/š/g, "s")
+    .replace(/đ/g, "dj")
+    .replace(/Č/g, "C")
+    .replace(/Ć/g, "C")
+    .replace(/Ž/g, "Z")
+    .replace(/Š/g, "S")
+    .replace(/Đ/g, "Dj")
+}
+
   const handleExportPdf = async () => {
-    const doc = new jsPDF({ orientation: "landscape" })
+  const doc = new jsPDF({ orientation: "landscape" })
 
-    const img = new Image()
-    img.src = logo
+  const img = new Image()
+  img.src = logo
 
-    await new Promise((resolve, reject) => {
-      img.onload = resolve
-      img.onerror = reject
-    })
+  await new Promise((resolve, reject) => {
+    img.onload = resolve
+    img.onerror = reject
+  })
 
-    const logoX = 14
-    const logoY = 8
-    const logoWidth = 30
-    const logoHeight = (img.height / img.width) * logoWidth
+  const logoX = 14
+  const logoY = 8
+  const logoWidth = 30
+  const logoHeight = (img.height / img.width) * logoWidth
 
-    doc.addImage(logo, "PNG", logoX, logoY, logoWidth, logoHeight)
+  doc.addImage(logo, "PNG", logoX, logoY, logoWidth, logoHeight)
 
-    doc.setFontSize(16)
-    doc.text("Generali unos goriva", 50, 16)
+  doc.setFontSize(16)
+  doc.text("Generali unos goriva", 50, 16)
 
-    doc.setFontSize(12)
-    doc.text(
-      `Izvjestaj za ${monthNames[selectedMonth - 1]} ${selectedYear}`,
-      50,
-      24
-    )
+  doc.setFontSize(12)
+  doc.text(
+    `Izvjestaj za ${monthNames[selectedMonth - 1]} ${selectedYear}`,
+    50,
+    24
+  )
 
-    const headerBottomY = Math.max(logoY + logoHeight, 24)
-    const tableStartY = headerBottomY + 8
+  const headerBottomY = Math.max(logoY + logoHeight, 24)
+  const tableStartY = headerBottomY + 8
 
-    autoTable(doc, {
-      startY: tableStartY,
-      head: [[
-        "Vozilo",
-        "Zaposleni",
-        "Predjeni km od pocetka godine",
-        "Predjeni km za mjesec",
-        "Sipano od pocetka godine",
-        "Sipano za mjesec",
-        "Potrosnja za mjesec",
-        "Mjesecni prosjek km",
-        "Mjesecni prosjek goriva",
-        "Prosjecna potrosnja na 100km od po",
-      ]],
-      body: sortedRows.map((row) => [
-        row.vehicleLabel,
-        row.employeeName,
+  autoTable(doc, {
+    startY: tableStartY,
+    head: [[
+      "Vozilo",
+      "Zaposleni",
+      "Predjeni km od pocetka godine",
+      "Predjeni km za mjesec",
+      "Sipano od pocetka godine",
+      "Sipano za mjesec",
+      "Potrosnja za mjesec",
+      "Mjesecni prosjek km",
+      "Mjesecni prosjek goriva",
+      "Prosjecna potrosnja na 100km od pocetka godine",
+    ]],
+    body: sortedRows.map((row) => {
+      const cleanedEmployeeName = normalizePdfText(row.employeeName)
+      const employeeParts = cleanedEmployeeName.trim().split(/\s+/)
+
+      const formattedEmployeeName =
+        employeeParts.length > 1
+          ? `${employeeParts[0]}\n${employeeParts.slice(1).join(" ")}`
+          : cleanedEmployeeName || "-"
+
+      const cleanedVehicleLabel = normalizePdfText(row.vehicleLabel)
+      const vehicleParts = cleanedVehicleLabel.trim().split(" ")
+
+      const formattedVehicleLabel =
+        vehicleParts.length > 1
+          ? `${vehicleParts.slice(0, -1).join(" ")}\n${vehicleParts[vehicleParts.length - 1]}`
+          : cleanedVehicleLabel || "-"
+
+      return [
+        formattedVehicleLabel,
+        formattedEmployeeName,
         row.kmYtd.toFixed(0),
         row.monthKm.toFixed(0),
         row.fuelYtd.toFixed(2),
@@ -313,20 +344,33 @@ function AdminFleetOverview() {
         row.avgKmYtd.toFixed(0),
         row.avgFuelYtd.toFixed(2),
         `${row.avgConsumptionYtd.toFixed(2)} l/100 km`,
-      ]),
-      styles: {
-        fontSize: 8,
-        cellPadding: 2,
-      },
-      headStyles: {
-        fillColor: [180, 0, 0],
-      },
-    })
+      ]
+    }),
+    styles: {
+      fontSize: 8,
+      cellPadding: 2,
+      overflow: "linebreak",
+      valign: "middle",
+    },
+    headStyles: {
+      fillColor: [180, 0, 0],
+      textColor: 255,
+      fontSize: 8,
+      fontStyle: "bold",
+      halign: "left",
+      valign: "middle",
+    },
+    columnStyles: {
+      0: { cellWidth: 34, overflow: "linebreak" },
+      1: { cellWidth: 28, overflow: "linebreak" },
+    },
+    margin: { left: 14, right: 14 },
+    tableWidth: "auto",
+  })
 
-    const fileName = `generali-fleet-${selectedYear}-${String(selectedMonth).padStart(2, "0")}.pdf`
-    doc.save(fileName)
-  }
-
+  const fileName = `generali-fleet-${selectedYear}-${String(selectedMonth).padStart(2, "0")}.pdf`
+  doc.save(fileName)
+}
   const SortableHeader = ({ label, sortKey }) => (
     <th
       className="text-left py-3 px-3 cursor-pointer select-none"
